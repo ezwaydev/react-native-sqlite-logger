@@ -457,6 +457,49 @@
     return success;
 }
 
+- (NSArray*)getUniqueTags:(NSNumber*)start end:(NSNumber*)end level:(NSNumber*)level;
+{
+
+    [self db_save];
+
+    NSMutableArray *whereArray = [[NSMutableArray alloc] init];
+    NSMutableArray *args = [[NSMutableArray alloc] init];
+
+    if (start) {
+        [whereArray addObject:@"timestamp >= ?"];
+        [args addObject:start];
+    }
+
+    if (end) {
+        [whereArray addObject:@"timestamp <= ?"];
+        [args addObject:end];
+    }
+
+    if (level) {
+        [whereArray addObject:@"level >= ?"];
+        [args addObject:level];
+    }
+
+    NSString *whereClause = [whereArray count] == 0 ? @"" : [NSString stringWithFormat:@" WHERE %@", [whereArray componentsJoinedByString:@" AND "]];
+    NSString *query = [NSString stringWithFormat:@"SELECT DISTINCT tag FROM logs%@", whereClause];
+
+    //NSLog(@"SQL: %@", query);
+    //NSLog(@"args:%@", args);
+
+    NSMutableArray *resultList = [[NSMutableArray alloc] init];
+
+    FMResultSet *resultSet = [database executeQuery:query withArgumentsInArray:args];
+
+    while ([resultSet next]) {
+        NSString *tag = [resultSet stringForColumn:@"tag"];
+        if (tag != nil) {
+            [resultList addObject:tag];
+        }
+    }
+
+    return resultList;
+}
+
 - (NSArray*)getLogs:(NSNumber*)start end:(NSNumber*)end level:(NSNumber*)level tags:(NSArray*)tags limit:(NSNumber*)limit order:(NSString*)order explicitLevel:(NSNumber*)explicitLevel;
 {
 

@@ -1,6 +1,7 @@
 package sk.kedros.sqlitelogger.db;
 
 import java.io.File;
+import java.lang.StringBuilder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -142,6 +143,56 @@ public class SQLiteLogStorage {
     }
   }
 
+  public List<String> getUniqueTags(Long start, Long end, Integer level) {
+    List<String> resultList = new ArrayList<>();
+    Cursor cursor = null;
+
+    try {
+      List<String> selection = new ArrayList<>(3);
+      List<String> selectionArgs = new ArrayList<>(3);
+      StringBuilder q = new StringBuilder("SELECT DISTINCT tag FROM logs");
+
+      if (start != null) {
+        selection.add(SQLQuery.SELECTION_TIMESTAMP_GTE);
+        selectionArgs.add(String.valueOf(start));
+      }
+
+      if (end != null) {
+        selection.add(SQLQuery.SELECTION_TIMESTAMP_LTE);
+        selectionArgs.add(String.valueOf(end));
+      }
+
+      if (level != null) {
+        selection.add(SQLQuery.SELECTION_LEVEL_GTE);
+        selectionArgs.add(String.valueOf(level));
+      }
+
+      if (!selection.isEmpty()) {
+        q.append(" WHERE ");
+        q.append(String.join(" AND ", selection));
+      }
+
+      Log.d(TAG, "+ getUniqueTags q:" + q.toString());
+      cursor = db.rawQuery(q.toString(), selectionArgs.isEmpty() ? null : selectionArgs.toArray(new String[0]));
+
+      if (cursor == null) {
+        return Collections.emptyList();
+      }
+
+      while (cursor.moveToNext()) {
+        resultList.add(cursor.getString(0));
+      }
+
+
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
+
+    return resultList;
+  }
+
   public List<LogEvent> getLogs(Long start, Long end, Integer limit, Integer level, List<String> tags, String order, Integer explicitLevel) {
 
     List<LogEvent> resultList = new ArrayList<>();
@@ -150,8 +201,8 @@ public class SQLiteLogStorage {
 
     try {
 
-      List<String> selection = new ArrayList<>(3);
-      List<String> selectionArgs = new ArrayList<>(3);
+      List<String> selection = new ArrayList<>(4);
+      List<String> selectionArgs = new ArrayList<>(4);
 
       if (start != null) {
         selection.add(SQLQuery.SELECTION_TIMESTAMP_GTE);
@@ -194,7 +245,7 @@ public class SQLiteLogStorage {
       }
 
       while (cursor.moveToNext()) {
-        Log.d(TAG, "+ cursor:" + cursor.getString(GET_LOGS_TAG_INDEX));
+        //Log.d(TAG, "+ cursor:" + cursor.getString(GET_LOGS_TAG_INDEX));
         resultList.add(new LogEvent(
           cursor.getLong(GET_LOGS_ID_INDEX),
           cursor.getLong(GET_LOGS_TIMESTAMP_INDEX),

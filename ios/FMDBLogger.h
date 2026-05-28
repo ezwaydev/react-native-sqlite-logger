@@ -37,6 +37,7 @@ typedef enum LogLevel {
 **/
 - (id)initWithLogDirectory:(NSString *)logFileDir logFileName:(NSString *)logFileName;
 - (BOOL)deleteLogs:(NSNumber*)start end:(NSNumber*)end maxId:(NSNumber*)maxId;
+- (NSArray*)getUniqueTags:(NSNumber*)start end:(NSNumber*)end level:(NSNumber*)level;
 - (NSArray*)getLogs:(NSNumber*)start end:(NSNumber*)end level:(NSNumber*)level tags:(NSArray*)tags limit:(NSNumber*)limit order:(NSString*)order explicitLevel:(NSNumber*)explicitLevel;
 - (NSString*)getDbFilePath;
 
