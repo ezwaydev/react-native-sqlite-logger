@@ -21,7 +21,12 @@ export default function App() {
         SQLiteLogger.debug('Example DEBUG message');
         SQLiteLogger.info('Example INFO message');
         
-        console.info({tag:'MyTag'}, 'Example INFO msg with TAG');
+        console.info({tag:'5999000000000091'}, 'Example INFO msg with tag: 5999000000000091');
+        console.debug({tag:'5999000000000092'}, 'Example DEBUG msg with tag: 5999000000000092');
+
+        // fetch used tags
+        const tags = await SQLiteLogger.getUniqueTags({});
+        console.info(tags);
 
         // Fetch at most 20 oldest logs
         const resultList = await SQLiteLogger.getLogs({

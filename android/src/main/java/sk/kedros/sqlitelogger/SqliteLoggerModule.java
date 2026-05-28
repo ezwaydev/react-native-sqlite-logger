@@ -206,6 +206,28 @@ public class SqliteLoggerModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void getUniqueTags(ReadableMap options, Promise promise) {
+    executeAsyncTask(promise, () -> {
+      try {
+        Long start = options.hasKey("start") ? (long) options.getDouble("start") : null;
+        Long end = options.hasKey("end") ? (long) options.getDouble("end") : null;
+        Integer level = options.hasKey("level") ? options.getInt("level") : null;
+
+        List<String> tags = this.sqLiteAppender.getLogStorage().getUniqueTags(start, end, level);
+
+        WritableArray result = Arguments.createArray();
+        for (String tag : tags) {
+          result.pushString(tag);
+        }
+
+        promise.resolve(result);
+      } catch (Throwable t) {
+        promise.reject(t);
+      }
+    });
+  }
+
+  @ReactMethod
   public void getLogs(ReadableMap options, Promise promise) {
     executeAsyncTask(promise, () -> {
       try {

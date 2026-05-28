@@ -199,6 +199,14 @@ class SQLiteLoggerImpl {
     return RNSqliteLogger.setTagOverride(tag);
   }
 
+  getUniqueTags(options: {
+    start?: number;
+    end?: number;
+    level?: LogLevel;
+  }): Promise<String[]> {
+    return RNSqliteLogger.getUniqueTags(options);
+  }
+
   getLogs(options: {
     start?: number;
     end?: number;

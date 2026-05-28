@@ -75,6 +75,15 @@ RCT_EXPORT_METHOD(write:(NSNumber* _Nonnull)level str:(NSString*)str tag:(NSStri
     }
 }
 
+RCT_EXPORT_METHOD(getUniqueTags:(NSDictionary*)options resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
+    NSNumber* start = options[@"start"];
+    NSNumber* end = options[@"end"];
+    NSNumber* level = options[@"level"];
+
+    NSArray* result = [self.sqliteLogger getUniqueTags:start end:end level:level];
+    resolve(result);
+}
+
 RCT_EXPORT_METHOD(getLogs:(NSDictionary*)options resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
     NSNumber* start = options[@"start"];
     NSNumber* end = options[@"end"];
