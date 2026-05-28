@@ -203,7 +203,7 @@ class SQLiteLoggerImpl {
     start?: number;
     end?: number;
     level?: LogLevel;
-  }): Promise<String[]> {
+  }): Promise<string[]> {
     return RNSqliteLogger.getUniqueTags(options);
   }
 
